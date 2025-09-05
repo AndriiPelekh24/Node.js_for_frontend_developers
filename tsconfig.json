@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    /* Основні налаштування компіляції */
+    "target": "ES2020",                // стандарт JS, який генерується
+    "module": "CommonJS",              // Node використовує CommonJS
+    "moduleResolution": "node",        // як шукати модулі
+    "outDir": "dist",                  // де збирати JS файли
+    "rootDir": "src",                  // вихідна папка з TS файлами
+
+    /* Типізація та строгість */
+    "strict": true,                    // включає всі strict опції
+    "esModuleInterop": true,           // дозволяє імпортувати CommonJS пакети як імпорт
+    "forceConsistentCasingInFileNames": true, // перевірка регістру імен файлів
+    "skipLibCheck": true,              // пропуск перевірки типів у node_modules
+    "noImplicitAny": true,             // помилка, якщо тип any не вказано явно
+    "strictNullChecks": true,          // перевірка на null/undefined
+    "strictFunctionTypes": true,       // перевірка сигнатур функцій
+    "noUnusedLocals": true,            // помилка при неиспользуемих локальних змінних
+    "noUnusedParameters": true         // помилка при неиспользуемих параметрах
+  },
+    "include": ["**/*.ts"],
+  "exclude": [
+    "node_modules",                    // виключає node_modules
+    "dist"                             // виключає папку з результатами компіляції
+  ]
+}
