@@ -11,7 +11,7 @@ export const createExercise = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Description is required" });
     }
 
-    if (!duration || isNaN(Number(duration)) || Number(duration) <= 0) {
+    if (!duration || Number(duration) <= 0) {
       return res
         .status(400)
         .json({ error: "Duration must be a positive number" });
