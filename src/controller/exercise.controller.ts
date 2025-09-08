@@ -57,21 +57,36 @@ export const createExercise = async (
 export const getUserExerciseLog = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
+    const { from, to, limit } = req.query;
 
     const user = await UserModel.getById(userId);
     if (!user || user.length === 0) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const exerciseLog = await ExerciseModel.getUserExerciseLog(userId);
+    let exerciseLog = await ExerciseModel.getUserExerciseLog(userId);
 
     if (!exerciseLog) {
       return res.status(404).json({ error: "User not found" });
     }
 
+    let filteredLogs = exerciseLog.logs.filter((ex) => {
+      const exDate = ex.date ? new Date(ex.date) : new Date();
+      const fromDate = from ? new Date(from as string) : null;
+      const toDate = to ? new Date(to as string) : null;
+
+      if (fromDate && exDate < fromDate) return false;
+      if (toDate && exDate > toDate) return false;
+      return true;
+    });
+
+    if (limit && !isNaN(Number(limit))) {
+      filteredLogs = filteredLogs.slice(0, Number(limit));
+    }
+
     const response: UserExerciseLog = {
       ...exerciseLog,
-      logs: exerciseLog.logs.map((ex) => {
+      logs: filteredLogs.map((ex) => {
         const dateObj = ex.date ? new Date(ex.date) : new Date();
         return {
           description: ex.description,
@@ -80,6 +95,7 @@ export const getUserExerciseLog = async (req: Request, res: Response) => {
           date: dateObj.toDateString(),
         };
       }),
+      count: filteredLogs.length,
     };
 
     return res.json(response);
@@ -88,6 +104,7 @@ export const getUserExerciseLog = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to request exerciseLog" });
   }
 };
+
 
 
 export const ExerciseController = {
