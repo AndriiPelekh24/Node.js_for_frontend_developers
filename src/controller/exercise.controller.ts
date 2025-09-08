@@ -1,51 +1,58 @@
 import { ExerciseModel } from "../models/exercise.model";
 import { Request, Response } from "express";
-import { UserExerciseLog } from "../interfaces/interfaces";
+import { ExerciseBody, UserExerciseLog } from "../interfaces/interfaces";
 import { UserModel } from "../models/user.model";
 
-export const createExercise = async (req: Request, res: Response) => {
+export const createExercise = async (
+  req: Request<{ id: string }, {}, ExerciseBody>,
+  res: Response
+): Promise<void> => {
   try {
     const { description, duration, date } = req.body;
-        const userId = req.params.id;
+    const userId = req.params.id;
+
     if (!description || description.trim().length === 0) {
-      return res.status(400).json({ error: "Description is required" });
+      res.status(400).json({ error: "Description is required" });
+      return;
     }
 
-    if (!duration || Number(duration) <= 0) {
-      return res
-        .status(400)
-        .json({ error: "Duration must be a positive number" });
+    if (duration === undefined || isNaN(Number(duration)) || Number(duration) <= 0) {
+      res.status(400).json({ error: "Duration must be a positive number" });
+      return;
     }
 
     if (!userId) {
-      return res.status(400).json({ error: "UserId is required" });
+      res.status(400).json({ error: "UserId is required" });
+      return;
     }
-    const exerciseDate = date ? new Date(date) : new Date();
 
-    
+    const exerciseDate: Date = date ? new Date(date) : new Date();
+
     const exercise = await ExerciseModel.createExercise(
       userId,
-      duration,
-      description,
-      date
+      Number(duration),          
+      description.trim(),
+      exerciseDate.toISOString()
     );
 
-    if (exercise && exercise.lastID) {
+    if (exercise?.lastID) {
       res.status(201).json({
-        userId: userId,
+        userId,
         exerciseId: exercise.lastID,
-        description: description,
-        duration: duration,
+        description: description.trim(),
+        duration: Number(duration),
         date: exerciseDate.toDateString(),
-        message: "Exercise created succesfully",
+        message: "Exercise created successfully",
       });
     } else {
-      res.status(400).json({ error: "Failed to create exercise" });
+      res.status(500).json({ error: "Failed to create exercise" });
     }
   } catch (error) {
-    res.status(500).json({ error: error });
+    console.error("Error in createExercise:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 export const getUserExerciseLog = async (req: Request, res: Response) => {
   try {
@@ -64,12 +71,15 @@ export const getUserExerciseLog = async (req: Request, res: Response) => {
 
     const response: UserExerciseLog = {
       ...exerciseLog,
-      logs: exerciseLog.logs.map((ex) => ({
-        description: ex.description,
-        duration: ex.duration,
-        id: ex.id,
-        date: new Date(ex.date).toDateString(),
-      })),
+      logs: exerciseLog.logs.map((ex) => {
+        const dateObj = ex.date ? new Date(ex.date) : new Date();
+        return {
+          description: ex.description,
+          duration: ex.duration,
+          id: ex.id,
+          date: dateObj.toDateString(),
+        };
+      }),
     };
 
     return res.json(response);

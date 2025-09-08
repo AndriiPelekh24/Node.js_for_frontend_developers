@@ -4,14 +4,15 @@ import dotenv from "dotenv";
 import path from "path";
 import userRouter from "./src/routes/user.route";
 import exerciseRouter from "./src/routes/exercise.route";
+import { BASE_URL } from "./src/interfaces/interfaces";
 
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/users', userRouter);
-app.use('/exercise', exerciseRouter);
+app.use(BASE_URL, userRouter);
+app.use(BASE_URL, exerciseRouter);
 app.use(cors());
 app.use(express.static("public"));
 

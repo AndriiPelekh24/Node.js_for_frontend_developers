@@ -28,21 +28,21 @@ export const createUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name } = req.body;
-
-    if (!name || name.trim().length === 0) {
+    const { username } = req.body;
+    console.log("BODY:", req.body);
+    if (!username || username.trim().length === 0) {
       res
         .status(400)
-        .json({ error: "Name is required and must be a non-empty string" });
+        .json({ error: "username is required and must be a non-empty string" });
       return;
     }
 
-    const result = await UserModel.createUser(name.trim());
+    const result = await UserModel.createUser(username.trim());
 
     if (result && result.lastID) {
       res.status(201).json({
         id: result.lastID,
-        name: name.trim(),
+        username: username.trim(),
         message: "User created successfully",
       });
     } else {
@@ -56,7 +56,7 @@ export const createUser = async (
       error.message?.includes("UNIQUE constraint failed")
     ) {
       res.status(400).json({
-        error: "User with this name already exists",
+        error: "User with this username already exists",
       });
     } else {
       res.status(500).json({

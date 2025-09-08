@@ -11,14 +11,18 @@ export interface CreatedExerciseResponse {
 	date: string;
 }
 
-export interface Exercise {
-	id: number;
+export interface ExerciseBody  {
 	description: string;
 	duration: number;
-	date: string;
+	date?: string;
+}
+export interface Exercise extends ExerciseBody {
+	id: number;
 }
 
 export interface UserExerciseLog extends User {
 	logs: Exercise[];
 	count: number;
 }
+
+export const BASE_URL = '/api/users'
