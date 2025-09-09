@@ -29,7 +29,7 @@ export const createUser = async (
 ): Promise<void> => {
   try {
     const { username } = req.body;
-    console.log("BODY:", req.body);
+
     if (!username || username.trim().length === 0) {
       res
         .status(400)

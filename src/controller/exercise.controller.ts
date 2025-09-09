@@ -2,6 +2,7 @@ import { ExerciseModel } from "../models/exercise.model";
 import { Request, Response } from "express";
 import { ExerciseBody, UserExerciseLog } from "../interfaces/interfaces";
 import { UserModel } from "../models/user.model";
+import { isValidDateString } from "../utils/utils";
 
 export const createExercise = async (
   req: Request<{ id: string }, {}, ExerciseBody>,
@@ -16,7 +17,11 @@ export const createExercise = async (
       return;
     }
 
-    if (duration === undefined || isNaN(Number(duration)) || Number(duration) <= 0) {
+    if (
+      duration === undefined ||
+      isNaN(Number(duration)) ||
+      Number(duration) <= 0
+    ) {
       res.status(400).json({ error: "Duration must be a positive number" });
       return;
     }
@@ -28,9 +33,13 @@ export const createExercise = async (
 
     const exerciseDate: Date = date ? new Date(date) : new Date();
 
+    if (date && !isValidDateString(date)) {
+      res.status(400).json({ error: "Date should be valid, format of date should be as YYYY-MM-DD" });
+      return;
+    }
     const exercise = await ExerciseModel.createExercise(
       userId,
-      Number(duration),          
+      Number(duration),
       description.trim(),
       exerciseDate.toISOString()
     );
@@ -52,7 +61,6 @@ export const createExercise = async (
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 export const getUserExerciseLog = async (req: Request, res: Response) => {
   try {
@@ -105,9 +113,7 @@ export const getUserExerciseLog = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const ExerciseController = {
-    createExercise,
-    getUserExerciseLog
-}
+  createExercise,
+  getUserExerciseLog,
+};

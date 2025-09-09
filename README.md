@@ -10,10 +10,20 @@ To Launch project run
 Endpoints to test  
 Exercises
 # POST http://localhost:3000/api/users/3/exercises 
+Example of Valid post request
+{ "description": "Going for a walk",
+  "duration": 30,
+  "date": "2025-09-09"
+}
 # GET http://localhost:3000/api/users/3/logs?from={date}&to=2025-09-30&limit={number}
 
 Users
 
 # POST http://localhost:3000/api/users/
+Example of Valid post request 
+{
+    "username": 'James Bond'
+}
 # GET http://localhost:3000/api/users/
 # GET http://localhost:3000/api/users/:id
+
