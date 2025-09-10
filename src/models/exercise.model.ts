@@ -75,7 +75,7 @@ const getUserExerciseLogWithFilters = async (
       params.push(to);
     }
 
-    sql += ' ORDER BY date DESC';
+    sql += ' ORDER BY date ASC';
 
     if (limit && limit > 0) {
       sql += ' LIMIT ?';
