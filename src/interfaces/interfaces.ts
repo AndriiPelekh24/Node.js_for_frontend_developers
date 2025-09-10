@@ -25,4 +25,9 @@ export interface UserExerciseLog extends User {
 	count: number;
 }
 
+export interface ExerciseLogQuery {
+  from?: string;
+  to?: string;
+  limit?: string;
+}
 export const BASE_URL = '/api/users'
